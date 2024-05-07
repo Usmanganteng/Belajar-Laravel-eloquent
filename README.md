@@ -221,3 +221,186 @@
 >$user = $phone->user;
 > ```
 > - Dengan menggunakan hubungan "One to One" ini, Anda dapat dengan mudah mengakses dan memanipulasi data antara dua model yang berhubungan satu sama lain.
+---
+> #### One to many
+> - Dalam Laravel Eloquent, "one to many" adalah hubungan di mana satu entitas memiliki banyak entitas lainnya. Dalam kasus model `User` dan `Post`, satu pengguna dapat memiliki banyak pos. Ini ditentukan dengan metode `hasMany()` di model `User`.
+> - Dalam Laravel, Anda dapat mendefinisikan hubungan ini di model Eloquent dengan menggunakan metode `hasMany()` pada model yang memiliki "banyak" entitas. Sebagai contoh:
+> ```
+> class User extends Model
+> {
+>     public function posts()
+>     {
+>         return $this->hasMany(Post::class);
+>     }
+> }
+> ```
+> - Dengan definisi ini, Anda dapat dengan mudah mengakses semua pos yang dimiliki oleh seorang pengguna melalui properti `posts` pada instance model `User`.
+---
+> #### Query Builder Relationship
+> - Dalam Laravel, Anda bisa menggunakan Query Builder untuk membuat relasi antara tabel dengan cara yang ringkas. Contohnya, untuk mengambil semua pos yang dimiliki oleh pengguna tertentu:
+> ```
+> $userId = 1;
+>
+> $posts = DB::table('posts')
+>            ->where('user_id', $userId)
+>            ->get();
+>```
+> - Dalam contoh ini, kita hanya melakukan filter pada tabel `posts` dengan kondisi bahwa `user_id` sama dengan ID pengguna yang diberikan.
+---
+> #### Has One of Many
+> - "Has One of Many" mungkin merujuk pada situasi di mana ada relasi di mana sebuah entitas memiliki satu baris dalam tabel lain, tetapi di sisi lain, baris tersebut juga dapat terhubung dengan banyak baris
+dalam tabel tersebut. Contoh umumnya adalah ketika sebuah entitas memiliki satu item "utama" tetapi juga memiliki banyak item terkait.
+> - Dalam konteks Laravel Eloquent, Anda dapat mencapainya dengan menggunakan metode `hasOne()` untuk menunjukkan relasi "Has One" dan kemudian menerapkan filter untuk menentukan item "utama" tersebut. Ini dapat dicapai dengan cara berikut:
+> ```
+> class User extends Model
+>{
+>    public function primaryItem()
+>    {
+>        return $this->hasOne(Item::class)->where('is_primary', true);
+>    }
+>
+>    public function items()
+>    {
+>        return $this->hasMany(Item::class);
+>    }
+>}
+>```
+> - Dalam contoh ini, `primaryItem()` akan mengembalikan satu item yang dianggap "utama" untuk pengguna tertentu, sementara `items()` akan mengembalikan semua item yang dimiliki oleh pengguna tersebut.
+---
+> #### Has One Through
+> - Dalam Laravel Eloquent, untuk menggunakan relasi "Has One Through" dengan lebih singkat, Anda dapat menggunakan metode `hasOneThrough()` di model `User`:
+>```
+>class User extends Model
+>{
+>    public function role()
+>    {
+>        return $this->hasOneThrough(Role::class, UserRole::class);
+>    }
+>}
+>```
+> - Dengan kode ini, Anda dapat dengan mudah mengakses peran tunggal yang dimiliki oleh seorang pengguna melalui relasi "Has One Through".
+--- 
+> #### Has Many Through
+> - Dalam Laravel Eloquent, Anda dapat menggunakan relasi "Has Many Through" dengan metode `hasManyThrough()` di model `Country`:
+> ```
+> class Country extends Model
+> {
+>    public function posts()
+>    {
+>        return $this->hasManyThrough(Post::class, User::class);
+>    }
+>}
+>```
+> - Dengan kode ini, Anda dapat dengan mudah mengakses semua pos yang terkait dengan negara tertentu melalui relasi "Has Many Through".
+---
+> #### Many to Many
+> - Dalam Laravel Eloquent, hubungan "Many to Many" dapat didefinisikan dengan cara yang singkat namun jelas. Misalnya, untuk model `User` dan `Role`, di mana seorang pengguna dapat memiliki banyak peran dan setiap peran dapat dimiliki oleh banyak pengguna:
+> ```
+> class User extends Model
+>{
+>    public function roles()
+>    {
+>        return $this->belongsToMany(Role::class);
+>    }
+>}
+>
+>class Role extends Model
+>{
+>    public function users()
+>    {
+>        return $this->belongsToMany(User::class);
+>    }
+>}
+>```
+> - Dalam contoh ini, model `User` memiliki metode `roles()` yang mengembalikan hubungan "Many to Many" dengan model `Role`, dan sebaliknya, model `Role` memiliki metode `users()` yang mengembalikan hubungan "Many to Many" dengan model `User`. Dengan definisi ini, Anda dapat dengan mudah mengakses peran yang dimiliki oleh pengguna dan pengguna yang memiliki suatu peran.
+---
+> #### Intermediate Table
+> - Intermediate table dalam Laravel Eloquent adalah tabel yang digunakan untuk merepresentasikan hubungan many-to-many antara dua model. Ini diatur melalui metode `belongsToMany()` di kedua model yang terlibat, dengan menyediakan nama tabel intermediate dan kunci asing yang sesuai.
+---
+> #### Pivot Model
+> - Pivot model dalam Laravel adalah model khusus yang mewakili tabel intermediate dalam hubungan many-to-many antara dua model Eloquent. Ini otomatis dibuat saat Anda menggunakan metode `belongsToMany()`. Pivot model memungkinkan Anda menambahkan logika tambahan atau perilaku khusus terkait dengan hubungan many-to-many tersebut.
+> - Contoh penggunaan pivot model dalam Laravel:
+> ```
+> use Illuminate\Database\Eloquent\Relations\Pivot;
+>
+>class UserRole extends Pivot {
+>    // Tambahkan logika tambahan di sini jika diperlukan
+>}
+>```
+> -  Dalam contoh di atas, `UserRole` adalah pivot model yang merepresentasikan tabel intermediate antara model User dan Role. Anda dapat menambahkan logika tambahan atau perilaku khusus ke dalam pivot model ini sesuai dengan kebutuhan aplikasi Anda.
+---
+> #### One to One Polymorphic
+> - One-to-One Polymorphic dalam Laravel Eloquent memungkinkan sebuah model terhubung dengan beberapa model lain secara fleksibel tanpa perlu menambahkan banyak kolom kunci asing. Ini dicapai dengan menggunakan metode `morphOne()` di model yang memiliki hubungan dan `morphTo()` di model yang beragam.
+---
+> #### One to Many Polymorphoc
+> - One-to-Many Polymorphic dalam Laravel Eloquent memungkinkan sebuah model terhubung dengan beberapa model lain secara fleksibel tanpa perlu menambahkan banyak kolom kunci asing. Ini dicapai dengan menggunakan metode `morphMany()` di model yang memiliki hubungan dan `morphTo()` di model yang beragam.
+---
+> #### Many to Many Polymorphic
+> - Many-to-Many Polymorphic dalam Laravel Eloquent memungkinkan sebuah model terhubung dengan beberapa model lain secara fleksibel tanpa perlu menambahkan banyak tabel intermediate. Ini dicapai dengan menggunakan metode `morphToMany()` di model yang memiliki hubungan dan `morphedByMany()` di model yang beragam.
+---
+> #### Polymorphic Type
+> - Polymorphic Type adalah istilah yang digunakan dalam konteks hubungan polymorphic dalam Laravel Eloquent. Ini merujuk pada kolom di tabel database yang menyimpan jenis (type) dari entitas yang terlibat dalam hubungan polymorphic.
+> - Dalam hubungan polymorphic, satu model dapat terhubung dengan beberapa model lain secara fleksibel. Untuk mengidentifikasi jenis entitas yang terlibat, Laravel menggunakan dua kolom: `morphable_id` yang menyimpan ID entitas terkait, dan `morphable_type` yang menyimpan jenis entitas tersebut.
+> - Polymorphic type ini mencatat nama kelas (class) entitas yang terlibat dalam hubungan. Misalnya, jika entitas yang terlibat adalah "User", nilai dari kolom `morphable_type` akan menjadi "App\Models\User". Ini memungkinkan Laravel untuk mengetahui tipe entitas secara dinamis saat membangun kueri atau mengambil data dari database.
+> - Dengan menggunakan polymorphic type, Laravel dapat menangani hubungan polymorphic secara transparan dan memudahkan penggunaan hubungan yang fleksibel antara model-model Eloquent dalam aplikasi.
+---
+> #### Lazy dan Eager Loading
+> - Lazy Loading adalah proses pengambilan data saat data tersebut benar-benar dibutuhkan. Eager Loading adalah proses pengambilan data yang dilakukan sebelum data tersebut diperlukan, biasanya dengan menggunakan metode `with()` pada kueri Eloquent.
+---
+> #### Querying Relations
+> - Querying Relations dalam Laravel Eloquent memungkinkan Anda untuk mengakses dan memanipulasi data yang terkait antara model-model dengan mudah. Anda dapat melakukan ini melalui metode relasi, metode querying langsung, dan menggunakan eager loading untuk mengoptimalkan kueri.
+---
+> #### Aggregating Relations
+> - Aggregating Relations dalam Laravel adalah proses menghitung nilai agregat (seperti jumlah, rata-rata, maksimum, minimum, dll.) dari data yang terkait antara model-model. Anda dapat menggunakan metode `withCount()` untuk menghitung jumlah relasi atau metode querying standar seperti `sum()`, `avg()`, `max()`, dan `min()` untuk menghitung nilai agregat dari data terkait.
+---
+> #### Accessor dan Mutator
+> - Accessor dalam Laravel Eloquent adalah metode yang digunakan untuk memanipulasi nilai atribut sebelum dikirimkan ke pengguna, sedangkan Mutator adalah metode yang digunakan untuk memanipulasi nilai atribut sebelum disimpan dalam basis data. Ini memungkinkan Anda untuk mengubah format atau menambahkan logika tambahan pada data sebelum atau sesudah disimpan.
+> - 1. Accessor adalah metode dalam model Eloquent yang digunakan untuk memanipulasi nilai atribut sebelum dikirimkan ke pengguna. Dengan accessor, Anda dapat mengubah format atau menambahkan logika tambahan pada nilai atribut sebelum nilai tersebut dikembalikan ke pengguna. Misalnya, Anda dapat membuat accessor untuk mengubah format tanggal atau menghitung nilai berdasarkan atribut lain.
+> - 2. Mutator adalah metode dalam model Eloquent yang digunakan untuk memanipulasi nilai atribut sebelum nilai tersebut disimpan dalam basis data. Dengan mutator, Anda dapat mengubah format atau menambahkan logika tambahan pada nilai atribut sebelum nilai tersebut disimpan. Misalnya, Anda dapat membuat mutator untuk mengubah format tanggal atau menghitung nilai berdasarkan atribut lain sebelum disimpan.
+---
+> #### Attribute Casting
+> - Attribute Casting adalah fitur dalam Laravel Eloquent yang memungkinkan Anda untuk secara otomatis mengonversi tipe data atribut dalam model ketika membaca atau menulis ke basis data.
+> - Dengan attribute casting, Anda dapat dengan mudah menentukan bahwa suatu atribut dalam model harus dianggap sebagai tipe data tertentu (seperti integer, boolean, array, JSON, dll.), dan Laravel akan secara otomatis melakukan konversi tersebut saat mengambil atau menyimpan data ke basis data.
+> - Contoh:
+> ```
+> class User extends Model
+>{
+>    protected $casts = [
+>        'is_admin' => 'boolean',
+>        'settings' => 'array',
+>        'dob' => 'date',
+>    ];
+>}
+>```
+> - Dalam contoh di atas, atribut `is_admin` akan dianggap sebagai boolean, `settings` akan dianggap sebagai array, dan `dob` akan dianggap sebagai tipe tanggal (date). Ketika Anda mengambil data dari basis data, Laravel akan secara otomatis mengonversi nilai-nilai atribut tersebut sesuai dengan tipe data yang ditentukan. Demikian pula, ketika Anda menyimpan data ke basis data, Laravel akan mengonversi nilai-nilai tersebut ke format yang sesuai untuk disimpan.
+> #### Custom Casts
+> - Custom Casts dalam Laravel Eloquent adalah fitur yang memungkinkan Anda membuat pengonversi tipe data kustom untuk mengonversi nilai atribut dalam model. Anda dapat membuat pengonversi sesuai kebutuhan dan mendaftarkannya dalam model menggunakan properti `$casts`.
+---
+> #### Serialization
+> - Serialization adalah proses mengonversi objek atau struktur data menjadi format yang dapat disimpan atau ditransmisikan, seperti string atau byte stream, sehingga data tersebut dapat dipertahankan atau dipindahkan ke tempat lain dengan mudah. Ini memungkinkan data untuk disimpan dalam bentuk yang dapat dibaca dan diproses oleh berbagai platform atau sistem.
+> - Dalam konteks pengembangan perangkat lunak, serialization sering digunakan untuk menyimpan objek dalam basis data, mentransmisikan data antara aplikasi yang berbeda, atau menyimpan konfigurasi aplikasi dalam berkas.
+> - Laravel menyediakan dukungan yang kuat untuk serialization melalui fitur seperti Eloquent Serialization, yang memungkinkan Anda untuk dengan mudah mengonversi model Eloquent dan relasinya menjadi format yang dapat disimpan atau ditransmisikan, seperti JSON atau array asosiatif. Ini memudahkan dalam menyimpan dan memanipulasi data dalam aplikasi Laravel.
+---
+> #### Factory
+> - Factory dalam konteks pengembangan perangkat lunak adalah mekanisme untuk membuat objek atau instance dari kelas dengan cara yang terstruktur dan terkontrol. Dalam framework Laravel, khususnya dalam Laravel's Database Testing dan Database Seeding, factory digunakan untuk membuat data dummy dalam basis data yang dapat digunakan untuk pengujian (testing) atau pengisian awal (seeding).
+> - Factory di Laravel biasanya digunakan bersama dengan Faker PHP, yang digunakan untuk menghasilkan data dummy yang realistis secara acak. Dengan menggunakan factory, Anda dapat dengan mudah membuat banyak instance dari model dengan data yang bervariasi untuk pengujian atau pengisian awal basis data.
+> - Contoh penggunaan factory dalam Laravel:
+> ```
+> use App\Models\User;
+>use Illuminate\Database\Eloquent\Factories\Factory;
+>
+>class UserFactory extends Factory
+>{
+>    protected $model = User::class;
+>
+>    public function definition()
+>    {
+>        return [
+>            'name' => $this->faker->name,
+>            'email' => $this->faker->unique()->safeEmail,
+>            'password' => bcrypt('password'),
+>        ];
+>    }
+>}
+>```
+> - Dalam contoh di atas, `UserFactory` adalah sebuah factory untuk model `User`. Method `definition()` mendefinisikan struktur data dummy yang akan digunakan untuk membuat instance baru dari model `User`. Dengan menggunakan factory, Anda dapat dengan mudah membuat banyak data dummy untuk digunakan dalam pengujian atau pengisian awal basis data.
