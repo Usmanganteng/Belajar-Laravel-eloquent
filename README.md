@@ -19,6 +19,28 @@
 >>   composer create-project laravel/laravel=v10.2.4 belajar-laravel-eloquent
 >>   ```
 ---
+<b>Cara Menjalankan/Run Project ini</b>
+---
+> - clone
+>  ```
+>  git clone git@github.com:Usmanganteng/belajar-laravel-eloquent-api-resource.git
+> ```
+>  - npm
+> ```
+> npm Instal
+> ```
+> ```
+> npm update
+> ```
+> - Database
+> ```
+> php artisan migrate
+> ```
+> - Run
+> ```
+> php artisan serve
+> ```
+---
 <b>Materi/Bahasan</b>
 ---
 > #### apa itu eloquent dalam laravel
